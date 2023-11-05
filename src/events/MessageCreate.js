@@ -10,10 +10,7 @@ module.exports = {
 		const args = message.content.slice(prefix.length).trim().split(/ +/);
 		// Gets the command from the args array
 		const command = args.shift().toLowerCase();
-
-		if(command === 'blog') {
-			return message.reply("https://medium.com/@accidental-feature");
-		}
+		// Command handlers
 		if(command === 'server') {
 			const serverDate = new Date(message.guild.createdAt).getTime();
 			const today = new Date().getTime();
