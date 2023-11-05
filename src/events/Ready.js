@@ -5,9 +5,7 @@ module.exports = {
 		console.log(`${client.user.displayName} is online!`);
 		// Array of activities for the bot to cycle through
 		const activities = [
-			"time go by.",
-			"Netflix.",
-			"you, sleep."
+			"",
 		]
 		// Changes Bot status every 10 seconds
 		setInterval(() => {
