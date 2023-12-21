@@ -3,13 +3,16 @@ module.exports = {
 	async execute(message) {
 		// Bang command prefix *can be changed*
 		const prefix = "!";
-		// No response if message doesn't start w/ prefix 
-		// or if message is written by a bot
+		
+		// No response if message doesn't start w/ prefix or if message is written by a bot
 		if (!message.content.startsWith(prefix) || message.author.bot) return;
+		
 		// Splits the argument(s) & removes the prefix and trailing whitespace
 		const args = message.content.slice(prefix.length).trim().split(/ +/);
+		
 		// Gets the command from the args array
 		const command = args.shift().toLowerCase();
+		
 		// Command handlers
 		if(command === 'server') {
 			const serverDate = new Date(message.guild.createdAt).getTime();
