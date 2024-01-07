@@ -1,6 +1,6 @@
 {
   "name": "bot-template",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Start creating your Discord bot using this template. Slash command ready.",
   "main": "src/index.js",
   "scripts": {

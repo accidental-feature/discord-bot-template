@@ -1,32 +1,48 @@
-// Require the necessary discord.js classes
-const { Client, GatewayIntentBits, Collection } = require('discord.js');
-// Require the file system module
+const { 
+    Client, Collection, GatewayIntentBits, Events
+} = require('discord.js');
 const fs = require('fs');
-// Initialize dotenv thus allowing the use of process.env
 const dotenv = require('dotenv');
 dotenv.config();
 
-// Initializes client and intents (perms)
+// Initialize Discord client with specific intents for bot functionality
 const client = new Client({ intents: [
-	GatewayIntentBits.Guilds, 
-	GatewayIntentBits.GuildMessages,
-	GatewayIntentBits.MessageContent,
-	GatewayIntentBits.GuildMembers,
+    GatewayIntentBits.Guilds, 
+    GatewayIntentBits.GuildMembers, 
+    GatewayIntentBits.GuildMessages, 
+    GatewayIntentBits.MessageContent, 
+    GatewayIntentBits.GuildMessageReactions
 ]});
 
-// Set the client's commands property to a new discord.js collection
+// Create a new collection to store bot commands
 client.commands = new Collection();
 
-const functions = fs.readdirSync('./src/functions').filter(file => file.endsWith(".js"));
-const eventFiles = fs.readdirSync('./src/events').filter(file => file.endsWith(".js"));
+// Retrieve lists of function, event, and command files
+const functions = fs.readdirSync('./src/functions').filter(file => file.endsWith('.js'));
+const eventFiles = fs.readdirSync('./src/events').filter(file => file.endsWith('.js'));
 const commandFolders = fs.readdirSync('./src/commands');
+const guildCommandFolders = fs.readdirSync('./src/commands/guild');
 
+// Retrieve client and guild IDs from environment variables
+const guildId = process.env.GUILD_ID;
+const clientId = process.env.CLIENT_ID;
+
+// Main bot initialization
 (async () => {
-	for(file of functions) {
-		require(`./functions/${file}`)(client);
-	}
-	// Handles all events and commands
-	client.handleEvents(eventFiles, "./src/events");
-	client.handleCommands(commandFolders, "./src/commands");
-	client.login(process.env.BOT_TOKEN)
+    // Load and apply all function modules to the client
+    for (const file of functions) {
+        require(`./functions/${file}`)(client);
+    }
+
+    // Set up event handlers and global/guild-specific commands
+    client.handleEvents(eventFiles, './src/events');
+    client.handleGlobalCommands(commandFolders, './src/commands', clientId);
+
+    // Handle guild-specific commands if a guild ID is provided and folders exist
+    if (guildId !== '' && guildCommandFolders.length !== 0) {
+        client.handleGuildCommands('./src/commands/guild', clientId, guildId);
+    }
+
+    // Log in to Discord with the bot's token
+    client.login(process.env.BOT_TOKEN);
 })();
