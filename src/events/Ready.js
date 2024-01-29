@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const mongodbUrl = process.env.mongodbUrl;
+const mongodbUrl = process.env.MONGODB_URI;
 
 module.exports = {
 	once: true,
