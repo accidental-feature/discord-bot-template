@@ -9,11 +9,13 @@ Creating a Discord bot has never been easier! This template comes slash command 
 * Simple Bang Command setup
 * Rotatable bot status
 * Slash Command ready
+* Database Integration
 * And more!
 
 ## Bots Created Using this Template
 
 [Text.re](https://top.gg/bot/1132849339530743960)
+[N0RM](https://discord.com/api/oauth2/authorize?client_id=1197103539512680488&permissions=1240105167991&scope=bot)
 
 ## Setup
 
@@ -109,6 +111,39 @@ If you wish to use specific features tied to a particular server (guild), you wi
 * Replace YOUR_GUILD_ID with the guild ID you copied. If you prefer not to use a specific guild ID, you can leave it as an empty string or remove it.
 
 Ensure that you save the changes to `src/functions/HandleCommands.js` after modifying it. This configuration is crucial for the bot's interaction with Discord's API specific to your application and server.
+
+#### Setup MongoDB Integration
+
+1. **Create a MongoDB Account**:
+   - Go to [MongoDB's website](https://www.mongodb.com/) and sign up for an account.
+   - Choose the free tier for a simple start, which is sufficient for basic bot functionalities.
+
+2. **Create a Cluster**:
+   - After logging in, create a new cluster. Choose the free tier option.
+   - Select a cloud provider and a region that is closest to you for better performance.
+   - Click on "Create Cluster" at the bottom of the page.
+
+3. **Configure Database Access**:
+   - Navigate to the "Database Access" section under "Security".
+   - Add a new database user with read and write privileges. Remember the username and password; you will need them to connect your bot to the database.
+
+4. **Configure Network Access**:
+   - Go to the "Network Access" section.
+   - Add a new IP address. For development, you can allow access from anywhere by using `0.0.0.0/0`.
+
+5. **Get Your Database Connection URL**:
+   - Once your cluster is set up, go to the "Clusters" section.
+   - Click on "Connect" -> "Connect your application".
+   - Choose the driver and version (usually Node.js) and copy the connection string provided.
+
+6. **Configure the Bot to Use MongoDB**:
+   - In your project, create or update your `.env` file with the MongoDB connection string:
+
+     ```env
+     MONGODB_URI=Your_MongoDB_Connection_String
+     ```
+
+   - Replace `Your_MongoDB_Connection_String` with the connection string you copied from MongoDB. Replace `<password>` with the database user's password you created earlier, and change `myFirstDatabase` to your preferred database name.
 
 ### 6. Run the Project
 
