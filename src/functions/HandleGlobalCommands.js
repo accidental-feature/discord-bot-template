@@ -29,26 +29,25 @@ module.exports = (client) => {
         const rest = new REST({ version: '9' }).setToken(process.env.BOT_TOKEN);
 
         // Self-invoking function to register global commands
-        (async () => {
-            try {
-                console.log('Started refreshing (/) commands.');
+		try {
+			const totalCommands = client.commandArray.length;
+			console.log('Started refreshing (/) commands.');
 
-                // Check for client ID
-                if (!clientId) {
-                    console.error('No client id provided.');
-                    return;
-                }
+			// Check for client ID
+			if (!clientId) {
+				console.error('No client id provided.');
+				return;
+			}
 
-                // Register global commands using the REST API
-                await rest.put(
-                    Routes.applicationCommands(clientId), { body: client.commandArray }
-                );
-
-                console.log(`Successfully reloaded (/) commands globally. ${client.commandArray.length} commands loaded.`);
-            } catch (error) {
-                // Log any errors during command registration
-                console.error('Failed to reload (/) commands globally:', error);
-            }
-        })();
+			// Register global commands using the REST API
+			await rest.put(
+				Routes.applicationCommands(clientId), { body: client.commandArray }
+			);
+			
+			console.log(`Successfully reloaded (/) commands globally. ${totalCommands} commands loaded.`);
+		} catch (error) {
+			// Log any errors during command registration
+			console.error('Failed to reload (/) commands globally:', error);
+		}
     };
 };
