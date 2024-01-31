@@ -1,20 +1,25 @@
 const mongoose = require('mongoose');
-const mongodbUrl = process.env.MONGODB_URI;
+const mongodbUri = process.env.MONGODB_URI;
 
 module.exports = {
 	once: true,
 	name: "ready",
 	async execute(client) {
 		// Connect to MongoDB
-		if(!mongodbUrl) return;
-		await mongoose.connect(mongodbUrl || '', {})
-		// Check if the bot is connected to MongoDB
-		if(mongoose.connect) {
-			console.log("Connected to MongoDB...")
-		} else {
-			console.log("Could not connect to MongoDB...")
+		if (!mongodbUri) {
+			console.log("No MongoDB URL provided.");
+			return;
 		}
 
+		// Check if the bot is connected to MongoDB
+		try {
+			await mongoose.connect(mongodbUri, {});
+			console.log("Connected to MongoDB...");
+		} catch (error) {
+			console.error("Could not connect to MongoDB:", error);
+			return;
+		}
+		
 		console.log(`${client.user.displayName} is online!`);
 
 		// The array of activities for the bot to cycle through
