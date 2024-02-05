@@ -1,48 +1,58 @@
+// Import necessary discord.js classes, fs for file system operations, and dotenv for environment variables
 const { 
     Client, Collection, GatewayIntentBits, Events
 } = require('discord.js');
 const fs = require('fs');
 const dotenv = require('dotenv');
-dotenv.config();
+dotenv.config(); // Load environment variables from .env file
 
-// Initialize Discord client with specific intents for bot functionality
+// Initialize Discord client with intents required for the bot to function properly
 const client = new Client({ intents: [
-    GatewayIntentBits.Guilds, 
-    GatewayIntentBits.GuildMembers, 
-    GatewayIntentBits.GuildMessages, 
-    GatewayIntentBits.MessageContent, 
-    GatewayIntentBits.GuildMessageReactions
+    GatewayIntentBits.Guilds, // Necessary for interaction within guilds
+    GatewayIntentBits.GuildMembers, // Access guild member related events and properties
+    GatewayIntentBits.GuildMessages, // Access messages in guilds
+    GatewayIntentBits.MessageContent, // Necessary to read message content
+    GatewayIntentBits.GuildMessageReactions // Access to message reactions in guilds
 ]});
 
-// Create a new collection to store bot commands
+// Initialize a collection to hold the bot's commands
 client.commands = new Collection();
 
-// Retrieve lists of function, event, and command files
+// Dynamically read the files for functions, events, and commands
 const functions = fs.readdirSync('./src/functions').filter(file => file.endsWith('.js'));
 const eventFiles = fs.readdirSync('./src/events').filter(file => file.endsWith('.js'));
 const commandFolders = fs.readdirSync('./src/commands');
-const guildCommandFolders = fs.readdirSync('./src/commands/guild');
 
-// Retrieve client and guild IDs from environment variables
-const guildId = process.env.GUILD_ID;
-const clientId = process.env.CLIENT_ID;
+// Retrieve necessary IDs and token from environment variables
+const isDev = process.env.DEVELOPMENT; // Check if running in development mode
+const clientId = process.env.CLIENT_ID; // Client ID for the bot
+const botToken = process.env.BOT_TOKEN; // Token for the bot
 
-// Main bot initialization
+// Additional testing environment variables
+const testToken = process.env.TEST_TOKEN; // Token for testing
+const testClientId = process.env.TEST_CLIENT_ID; // Client ID for testing
+const guildId = process.env.GUILD_ID; // Specific guild ID for testing or guild-specific commands
+
+// Main bot initialization logic wrapped in an async function
 (async () => {
     // Load and apply all function modules to the client
     for (const file of functions) {
         require(`./functions/${file}`)(client);
     }
-
-    // Set up event handlers and global/guild-specific commands
+	
+	// Load and handle events
     client.handleEvents(eventFiles, './src/events');
-    client.handleGlobalCommands(commandFolders, './src/commands', clientId);
 
-    // Handle guild-specific commands if a guild ID is provided and folders exist
-    if (guildId !== '' && guildCommandFolders.length !== 0) {
-        client.handleGuildCommands('./src/commands/guild', clientId, guildId);
-    }
-
-    // Log in to Discord with the bot's token
-    client.login(process.env.BOT_TOKEN);
+    // Check if running in development mode
+	if (isDev === 'true') {
+		console.log("Running in development mode");
+		// Load guild-specific commands if in development mode
+		client.handleCommands(testToken, commandFolders, './src/commands', testClientId, guildId);
+		client.login(testToken); // Log in using the test token
+	} else {
+		console.log("Running in production mode");
+		// Load global commands if in production mode
+		client.handleCommands(botToken, commandFolders, './src/commands', clientId);
+		client.login(botToken); // Log in using the production bot token
+	}
 })();
